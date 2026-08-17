@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from google import genai
 from google.genai import types
@@ -21,8 +21,7 @@ Important rules:
 - If a user asks for specific Neura Solutions information that you do not have
   verified context for, clearly say that you do not have verified information
   for that detail.
-- Do not pretend that general Gemini knowledge is official Neura company data.
-- Knowledge-base support will be added separately later.
+- Do not pretend that general model knowledge is official Neura company data.
 """
 
 
@@ -33,10 +32,32 @@ class GeminiService:
         )
         self.model = settings.gemini_model
 
+    def build_system_instruction(
+        self,
+        context: Optional[str],
+    ) -> str:
+
+        if not context:
+            return SYSTEM_PROMPT
+
+        return f"""
+{SYSTEM_PROMPT}
+
+VERIFIED NEURA KNOWLEDGE BASE CONTEXT:
+
+{context}
+
+When answering Neura-specific factual questions:
+- Use the verified knowledge-base context above.
+- Do not invent information missing from the context.
+- If the context does not contain enough information, say so clearly.
+"""
+
     async def generate_response(
         self,
         message: str,
         history: List[dict],
+        context: Optional[str] = None,
     ) -> str:
 
         contents = []
@@ -70,12 +91,16 @@ class GeminiService:
             model=self.model,
             contents=contents,
             config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
+                system_instruction=self.build_system_instruction(
+                    context
+                ),
                 temperature=0.4,
             ),
         )
 
         if not response.text:
-            raise RuntimeError("Gemini returned an empty response.")
+            raise RuntimeError(
+                "Gemini returned an empty response."
+            )
 
         return response.text.strip()
