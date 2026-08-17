@@ -1,12 +1,9 @@
-import os
 from typing import List
 
-from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-
-load_dotenv()
+from app.core.config import settings
 
 
 SYSTEM_PROMPT = """
@@ -31,13 +28,10 @@ Important rules:
 
 class GeminiService:
     def __init__(self):
-        api_key = os.getenv("GEMINI_API_KEY")
-
-        if not api_key:
-            raise RuntimeError("GEMINI_API_KEY was not found.")
-
-        self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-3.6-flash"
+        self.client = genai.Client(
+            api_key=settings.gemini_api_key
+        )
+        self.model = settings.gemini_model
 
     async def generate_response(
         self,
