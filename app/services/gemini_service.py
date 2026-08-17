@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from dotenv import load_dotenv
 from google import genai
@@ -17,6 +18,7 @@ technology solutions, and related topics.
 
 Important rules:
 - Be clear, professional, concise, and helpful.
+- Use previous messages in the conversation when relevant.
 - Do not invent Neura Solutions Limited pricing, clients, policies, products,
   capabilities, or company-specific facts.
 - If a user asks for specific Neura Solutions information that you do not have
@@ -37,10 +39,42 @@ class GeminiService:
         self.client = genai.Client(api_key=api_key)
         self.model = "gemini-3.6-flash"
 
-    async def generate_response(self, message: str) -> str:
+    async def generate_response(
+        self,
+        message: str,
+        history: List[dict],
+    ) -> str:
+
+        contents = []
+
+        for item in history:
+            role = "model" if item["role"] == "assistant" else "user"
+
+            contents.append(
+                types.Content(
+                    role=role,
+                    parts=[
+                        types.Part(
+                            text=item["content"],
+                        )
+                    ],
+                )
+            )
+
+        contents.append(
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part(
+                        text=message,
+                    )
+                ],
+            )
+        )
+
         response = await self.client.aio.models.generate_content(
             model=self.model,
-            contents=message,
+            contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=SYSTEM_PROMPT,
                 temperature=0.4,

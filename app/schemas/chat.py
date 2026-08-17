@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -9,8 +11,14 @@ class ChatRequest(BaseModel):
         description="Message sent by the website visitor",
     )
 
+    conversation_id: Optional[str] = Field(
+        default=None,
+        description="Existing conversation ID. Leave empty for a new conversation.",
+    )
+
 
 class ChatResponse(BaseModel):
     success: bool
+    conversation_id: str
     message: str
     mode: str = "general"
