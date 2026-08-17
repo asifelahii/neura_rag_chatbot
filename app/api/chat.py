@@ -1,9 +1,12 @@
+import logging
+
 from fastapi import APIRouter, HTTPException
 
 from app.conversations.store import conversation_store
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.gemini_service import GeminiService
 
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1", tags=["Chat"])
 
@@ -57,7 +60,9 @@ async def chat(request: ChatRequest):
         raise
 
     except Exception:
-        raise HTTPException(
-            status_code=503,
-            detail="The AI service is temporarily unavailable.",
+        logger.exception("Chat request failed")
+
+    raise HTTPException(
+        status_code=503,
+        detail="The AI service is temporarily unavailable.",
         )
