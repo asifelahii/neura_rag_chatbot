@@ -20,6 +20,9 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore",
     )
+    allowed_origins: list[str] = [
+    "https://neura-solutions.vercel.app",
+    ]
 
 
 settings = Settings()
