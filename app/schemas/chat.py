@@ -13,7 +13,7 @@ class ChatRequest(BaseModel):
 
     conversation_id: Optional[str] = Field(
         default=None,
-        description="Existing conversation ID. Leave empty for a new conversation.",
+        description="Existing conversation token. Leave empty for a new conversation.",
     )
 
 

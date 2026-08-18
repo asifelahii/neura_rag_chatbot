@@ -5,6 +5,10 @@ from fastapi import APIRouter, HTTPException, Request
 from app.conversations.store import conversation_store
 from app.rag.retriever import get_knowledge_retriever
 from app.schemas.chat import ChatRequest, ChatResponse
+from app.security.conversation_token import (
+    ConversationTokenError,
+    conversation_token_service,
+)
 from app.security.rate_limiter import rate_limiter
 from app.services.ai_exceptions import AIServiceUnavailableError
 from app.services.gemini_service import GeminiService
@@ -32,21 +36,47 @@ async def chat(
 
         rate_limiter.check(client_host)
 
-        conversation_id = request.conversation_id
+        conversation_token = request.conversation_id
 
-        if not conversation_id:
-            conversation_id = await conversation_store.create()
+        if not conversation_token:
+            internal_conversation_id = (
+                await conversation_store.create()
+            )
 
-        elif not await conversation_store.exists(
-            conversation_id
-        ):
-            raise HTTPException(
-                status_code=404,
-                detail="Conversation not found.",
+            response_conversation_token = (
+                conversation_token_service.create(
+                    internal_conversation_id
+                )
+            )
+
+        else:
+            try:
+                internal_conversation_id = (
+                    conversation_token_service.verify(
+                        conversation_token
+                    )
+                )
+
+            except ConversationTokenError:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Conversation not found.",
+                )
+
+            if not await conversation_store.exists(
+                internal_conversation_id
+            ):
+                raise HTTPException(
+                    status_code=404,
+                    detail="Conversation not found.",
+                )
+
+            response_conversation_token = (
+                conversation_token
             )
 
         history = await conversation_store.get_messages(
-            conversation_id
+            internal_conversation_id
         )
 
         context = await knowledge_retriever.retrieve(
@@ -60,13 +90,13 @@ async def chat(
         )
 
         await conversation_store.add_message(
-            conversation_id=conversation_id,
+            conversation_id=internal_conversation_id,
             role="user",
             content=request.message,
         )
 
         await conversation_store.add_message(
-            conversation_id=conversation_id,
+            conversation_id=internal_conversation_id,
             role="assistant",
             content=answer,
         )
@@ -75,7 +105,7 @@ async def chat(
 
         return ChatResponse(
             success=True,
-            conversation_id=conversation_id,
+            conversation_id=response_conversation_token,
             message=answer,
             mode=mode,
         )

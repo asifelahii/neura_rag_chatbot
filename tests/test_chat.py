@@ -255,3 +255,83 @@ def test_ai_provider_unavailable_returns_503(
             "Please try again shortly."
         )
     }
+
+def test_new_conversation_returns_signed_token(
+    monkeypatch,
+):
+    async def fake_generate_response(
+        message,
+        history,
+        context=None,
+    ):
+        return "Mock response"
+
+    monkeypatch.setattr(
+        gemini_service,
+        "generate_response",
+        fake_generate_response,
+    )
+
+    response = client.post(
+        "/api/v1/chat",
+        json={
+            "message": "Hello",
+            "conversation_id": None,
+        },
+    )
+
+    assert response.status_code == 200
+
+    token = response.json()["conversation_id"]
+
+    assert "." in token
+    assert len(token) > 36
+
+
+def test_tampered_conversation_token_returns_404(
+    monkeypatch,
+):
+    async def fake_generate_response(
+        message,
+        history,
+        context=None,
+    ):
+        return "Mock response"
+
+    monkeypatch.setattr(
+        gemini_service,
+        "generate_response",
+        fake_generate_response,
+    )
+
+    first_response = client.post(
+        "/api/v1/chat",
+        json={
+            "message": "Hello",
+            "conversation_id": None,
+        },
+    )
+
+    token = first_response.json()[
+        "conversation_id"
+    ]
+
+    payload, signature = token.split(".", 1)
+
+    tampered_token = (
+        f"{payload}x.{signature}"
+    )
+
+    second_response = client.post(
+        "/api/v1/chat",
+        json={
+            "message": "Continue",
+            "conversation_id": tampered_token,
+        },
+    )
+
+    assert second_response.status_code == 404
+
+    assert second_response.json() == {
+        "detail": "Conversation not found."
+    }
