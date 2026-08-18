@@ -1,0 +1,234 @@
+<main
+  class="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100"
+>
+  <div
+    class="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl"
+  ></div>
+
+  <div
+    class="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl"
+  ></div>
+
+  <div
+    class="relative mx-auto flex min-h-screen max-w-7xl items-center justify-center p-3 sm:p-6"
+  >
+    <section
+      class="flex h-[calc(100vh-1.5rem)] min-h-[620px] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-900/80 shadow-2xl shadow-black/40 backdrop-blur-xl sm:h-[calc(100vh-3rem)]"
+    >
+      <header
+        class="flex items-center justify-between border-b border-white/10 px-4 py-4 sm:px-6"
+      >
+        <div class="flex min-w-0 items-center gap-3">
+          <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-lg font-bold text-white shadow-lg shadow-cyan-500/20"
+          >
+            N
+          </div>
+
+          <div>
+            <h1
+              class="text-base font-semibold text-white sm:text-lg"
+            >
+              Neura AI Assistant
+            </h1>
+
+            <div
+              class="mt-0.5 flex items-center gap-2 text-xs text-slate-400 sm:text-sm"
+            >
+              <span
+                class="h-2 w-2 rounded-full bg-emerald-400"
+              ></span>
+
+              <span>
+                Assistant preview
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          (click)="newChat()"
+          class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white sm:px-4"
+        >
+          New chat
+        </button>
+      </header>
+
+      <div
+        #messagesContainer
+        class="flex-1 overflow-y-auto px-4 py-6 sm:px-6 md:px-10 md:py-8"
+      >
+        <div
+          class="mx-auto flex min-h-full max-w-3xl flex-col"
+        >
+          @if (messages.length === 0) {
+            <div
+              class="flex flex-1 flex-col items-center justify-center py-8 text-center"
+            >
+              <div
+                class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="h-8 w-8"
+                >
+                  <path
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H6.8A2.8 2.8 0 0 1 4 13.2V7.8A2.8 2.8 0 0 1 6.8 5h10.4A2.8 2.8 0 0 1 20 7.8v5.4a2.8 2.8 0 0 1-2.8 2.8H14l-5 3v-3Z"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+
+              <p
+                class="mb-3 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-400"
+              >
+                AI-powered assistance
+              </p>
+
+              <h2
+                class="max-w-xl text-3xl font-semibold tracking-tight text-white sm:text-4xl"
+              >
+                How can I help your business today?
+              </h2>
+
+              <p
+                class="mt-4 max-w-xl text-sm leading-6 text-slate-400 sm:text-base"
+              >
+                Ask questions about software,
+                automation, ERP workflows,
+                digital solutions, or general
+                technology topics.
+              </p>
+
+              <div
+                class="mt-8 grid w-full max-w-2xl gap-3 sm:grid-cols-3"
+              >
+                @for (
+                  suggestion of suggestions;
+                  track suggestion
+                ) {
+                  <button
+                    type="button"
+                    (click)="useSuggestion(suggestion)"
+                    class="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left text-sm text-slate-300 transition hover:-translate-y-0.5 hover:border-cyan-400/30 hover:bg-cyan-400/[0.06]"
+                  >
+                    {{ suggestion }}
+                  </button>
+                }
+              </div>
+            </div>
+          } @else {
+            <div
+              class="flex flex-col gap-5 py-2"
+            >
+              @for (
+                message of messages;
+                track $index
+              ) {
+                <div
+                  class="flex"
+                  [class.justify-end]="message.role === 'user'"
+                >
+                  <div
+                    class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 sm:max-w-[75%]"
+                    [class.bg-gradient-to-br]="message.role === 'user'"
+                    [class.from-cyan-500]="message.role === 'user'"
+                    [class.to-indigo-500]="message.role === 'user'"
+                    [class.text-white]="message.role === 'user'"
+                    [class.border]="message.role === 'assistant'"
+                    [class.border-white/10]="message.role === 'assistant'"
+                    [class.bg-white/[0.05]]="message.role === 'assistant'"
+                    [class.text-slate-200]="message.role === 'assistant'"
+                  >
+                    {{ message.content }}
+                  </div>
+                </div>
+              }
+
+              @if (isSending) {
+                <div class="flex justify-start">
+                  <div
+                    class="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-4"
+                  >
+                    <span
+                      class="h-2 w-2 animate-bounce rounded-full bg-slate-500"
+                    ></span>
+
+                    <span
+                      class="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:120ms]"
+                    ></span>
+
+                    <span
+                      class="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:240ms]"
+                    ></span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <footer
+        class="border-t border-white/10 bg-slate-950/30 px-4 py-4 sm:px-6"
+      >
+        <div class="mx-auto max-w-3xl">
+          @if (errorMessage) {
+            <div
+              class="mb-3 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
+            >
+              {{ errorMessage }}
+            </div>
+          }
+
+          <div
+            class="flex items-end gap-2 rounded-2xl border border-white/10 bg-white/[0.05] p-2 focus-within:border-cyan-400/30"
+          >
+            <textarea
+              [(ngModel)]="input"
+              (keydown)="handleKeydown($event)"
+              rows="1"
+              maxlength="4000"
+              [disabled]="isSending"
+              placeholder="Ask Neura AI anything..."
+              class="max-h-36 min-h-11 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm leading-6 text-white outline-none placeholder:text-slate-500 disabled:opacity-60"
+            ></textarea>
+
+            <button
+              type="button"
+              (click)="sendMessage()"
+              [disabled]="!input.trim() || isSending"
+              aria-label="Send message"
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-white shadow-lg shadow-cyan-500/20 transition hover:scale-[1.03] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                class="h-5 w-5"
+              >
+                <path
+                  d="m5 12 14-7-4 14-3-6-7-1Z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <p
+            class="mt-2 text-center text-[11px] text-slate-600"
+          >
+            Enter to send · Shift + Enter for a new line
+          </p>
+        </div>
+      </footer>
+    </section>
+  </div>
+</main>
