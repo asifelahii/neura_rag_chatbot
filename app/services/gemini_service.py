@@ -1,9 +1,12 @@
+import asyncio
+
 from typing import List, Optional
 
 from google import genai
-from google.genai import types
+from google.genai import types, errors
 
 from app.core.config import settings
+from app.services.ai_exceptions import AIServiceUnavailableError
 
 
 SYSTEM_PROMPT = """
@@ -87,16 +90,45 @@ When answering Neura-specific factual questions:
             )
         )
 
-        response = await self.client.aio.models.generate_content(
-            model=self.model,
-            contents=contents,
-            config=types.GenerateContentConfig(
-                system_instruction=self.build_system_instruction(
-                    context
-                ),
-                temperature=0.4,
-            ),
-        )
+        try:
+            async with asyncio.timeout(
+                settings.gemini_request_timeout_seconds
+            ):
+                response = (
+                    await self.client.aio.models.generate_content(
+                        model=self.model,
+                        contents=contents,
+                        config=types.GenerateContentConfig(
+                            system_instruction=(
+                                self.build_system_instruction(
+                                    context
+                                )
+                            ),
+                            temperature=0.4,
+                            max_output_tokens=(
+                                settings.gemini_max_output_tokens
+                            ),
+                            automatic_function_calling=(
+                                types.AutomaticFunctionCallingConfig(
+                                    disable=True
+                                )
+                            ),
+                        ),
+                    )
+                )
+
+        except TimeoutError as exc:
+            raise AIServiceUnavailableError(
+                "Gemini request timed out."
+            ) from exc
+
+        except errors.APIError as exc:
+            if exc.code in (429, 503):
+                raise AIServiceUnavailableError(
+                    "Gemini is temporarily unavailable."
+                ) from exc
+
+            raise
 
         if not response.text:
             raise RuntimeError(

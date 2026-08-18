@@ -1,14 +1,49 @@
-from fastapi import FastAPI
+import logging
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.chat import router as chat_router
+from app.conversations.store import conversation_store
 from app.core.config import settings
+from app.middleware.request_context import RequestContextMiddleware
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format=(
+        "%(asctime)s "
+        "%(levelname)s "
+        "%(name)s "
+        "%(message)s"
+    ),
+)
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info(
+        "Starting %s",
+        settings.app_name,
+    )
+
+    yield
+
+    await conversation_store.close()
+
+    logger.info(
+        "Neura application resources closed successfully"
+    )
 
 
 app = FastAPI(
     title=settings.app_name,
     description="AI chatbot microservice for Neura Solutions Limited",
     version=settings.app_version,
+    lifespan=lifespan,
 )
 
 
@@ -17,9 +52,13 @@ app.add_middleware(
     allow_origins=settings.allowed_origins,
     allow_credentials=False,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_headers=[
+        "Content-Type",
+        "X-Request-ID",
+    ],
 )
 
+app.add_middleware(RequestContextMiddleware)
 
 app.include_router(chat_router)
 
@@ -29,4 +68,32 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "Neura RAG Chatbot",
+    }
+
+@app.get("/ready", tags=["Health"])
+async def readiness_check():
+    try:
+        store_ready = await conversation_store.ping()
+
+    except Exception:
+        logger.exception(
+            "Conversation store readiness check failed"
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail="Service is not ready.",
+        )
+
+    if not store_ready:
+        raise HTTPException(
+            status_code=503,
+            detail="Service is not ready.",
+        )
+
+    return {
+        "status": "ready",
+        "dependencies": {
+            "conversation_store": "healthy",
+        },
     }
