@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://neura-rag-chatbot.onrender.com/api/:path*"
+    }
+  ]
+}
