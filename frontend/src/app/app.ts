@@ -10,6 +10,7 @@ import {
 import {
   HttpErrorResponse,
 } from '@angular/common/http';
+import { marked } from 'marked';
 
 import {
   ChatService,
@@ -48,6 +49,10 @@ export class App {
     'How can ERP improve business operations?',
     'What business processes can be automated?',
   ];
+
+  renderMarkdown(content: string): string {
+    return marked.parse(content, { async: false }) as string;
+  }
 
   useSuggestion(
     suggestion: string,
