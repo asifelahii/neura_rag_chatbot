@@ -1,60 +1,81 @@
 <main
-  class="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100"
+  class="relative min-h-screen overflow-hidden bg-surface-950 text-slate-100"
 >
   <div
-    class="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl"
+    class="pointer-events-none absolute -left-40 -top-24 h-[30rem] w-[30rem] rounded-full bg-brand-600/10 blur-3xl"
   ></div>
 
   <div
-    class="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl"
+    class="pointer-events-none absolute -bottom-40 -right-40 h-[32rem] w-[32rem] rounded-full bg-brand-500/5 blur-3xl"
   ></div>
 
   <div
     class="relative mx-auto flex min-h-screen max-w-7xl items-center justify-center p-3 sm:p-6"
   >
     <section
-      class="flex h-[calc(100vh-1.5rem)] min-h-[620px] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-900/80 shadow-2xl shadow-black/40 backdrop-blur-xl sm:h-[calc(100vh-3rem)]"
+      class="flex h-[calc(100vh-1.5rem)] min-h-[620px] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-surface-900/90 shadow-2xl shadow-black/40 backdrop-blur-xl sm:h-[calc(100vh-3rem)]"
     >
+      <!-- Header -->
       <header
-        class="flex items-center justify-between border-b border-white/10 px-4 py-4 sm:px-6"
+        class="flex min-h-[78px] items-center justify-between border-b border-white/10 px-4 py-4 sm:px-6"
       >
-        <div class="flex min-w-0 items-center gap-3">
-          <div
-            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-lg font-bold text-white shadow-lg shadow-cyan-500/20"
+        <div class="flex min-w-0 items-center gap-4">
+          <img
+            src="/assets/brand/neura-logo-horizontal.png"
+            alt="Neura Solutions Limited"
+            class="h-9 w-auto shrink-0 object-contain sm:h-10"
+            width="220"
+            height="52"
           >
-            N
-          </div>
 
-          <div>
-            <h1
-              class="text-base font-semibold text-white sm:text-lg"
-            >
-              Neura AI Assistant
-            </h1>
+          <div
+            class="hidden h-7 w-px bg-white/10 sm:block"
+            aria-hidden="true"
+          ></div>
+
+          <!-- <div class="hidden sm:block">
+            <p class="text-sm font-semibold text-slate-200">
+              AI Assistant
+            </p>
 
             <div
-              class="mt-0.5 flex items-center gap-2 text-xs text-slate-400 sm:text-sm"
+              class="mt-0.5 flex items-center gap-2 text-xs text-slate-500"
             >
               <span
-                class="h-2 w-2 rounded-full bg-emerald-400"
+                class="h-1.5 w-1.5 rounded-full bg-emerald-400"
               ></span>
 
-              <span>
-                Assistant preview
-              </span>
+              <span>Online</span>
             </div>
-          </div>
+          </div> -->
         </div>
 
         <button
           type="button"
           (click)="newChat()"
-          class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white sm:px-4"
+          class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm font-medium text-slate-300 transition hover:border-brand-400/20 hover:bg-brand-500/10 hover:text-white"
         >
-          New chat
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            class="h-4 w-4"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 5V19M5 12H19"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+
+          <span class="hidden sm:inline">
+            New chat
+          </span>
         </button>
       </header>
 
+      <!-- Conversation -->
       <div
         #messagesContainer
         class="flex-1 overflow-y-auto px-4 py-6 sm:px-6 md:px-10 md:py-8"
@@ -63,48 +84,42 @@
           class="mx-auto flex min-h-full max-w-3xl flex-col"
         >
           @if (messages.length === 0) {
+            <!-- Welcome -->
             <div
               class="flex flex-1 flex-col items-center justify-center py-8 text-center"
             >
               <div
-                class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300"
+                class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-400/20 bg-brand-500/10 p-3 shadow-[0_18px_45px_rgba(28,111,245,0.12)]"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  class="h-8 w-8"
+                <img
+                  src="/assets/brand/neura-mark.png"
+                  alt=""
+                  aria-hidden="true"
+                  class="h-full w-full object-contain"
                 >
-                  <path
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H6.8A2.8 2.8 0 0 1 4 13.2V7.8A2.8 2.8 0 0 1 6.8 5h10.4A2.8 2.8 0 0 1 20 7.8v5.4a2.8 2.8 0 0 1-2.8 2.8H14l-5 3v-3Z"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
               </div>
 
               <p
-                class="mb-3 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-400"
+                class="mb-4 rounded-full border border-brand-400/15 bg-brand-500/5 px-3 py-1 text-xs font-medium text-brand-300"
               >
-                AI-powered assistance
+                Neura AI Assistant
               </p>
 
-              <h2
-                class="max-w-xl text-3xl font-semibold tracking-tight text-white sm:text-4xl"
+              <h1
+                class="max-w-2xl text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl md:text-[2.65rem] md:leading-[1.12]"
               >
                 How can I help your business today?
-              </h2>
+              </h1>
 
               <p
                 class="mt-4 max-w-xl text-sm leading-6 text-slate-400 sm:text-base"
               >
-                Ask questions about software,
-                automation, ERP workflows,
-                digital solutions, or general
-                technology topics.
+                Ask about software, business automation,
+                ERP workflows, digital solutions, or
+                general technology topics.
               </p>
 
+              <!-- Suggested prompts -->
               <div
                 class="mt-8 grid w-full max-w-2xl gap-3 sm:grid-cols-3"
               >
@@ -115,56 +130,100 @@
                   <button
                     type="button"
                     (click)="useSuggestion(suggestion)"
-                    class="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left text-sm text-slate-300 transition hover:-translate-y-0.5 hover:border-cyan-400/30 hover:bg-cyan-400/[0.06]"
+                    class="group flex min-h-[118px] flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-left transition hover:-translate-y-0.5 hover:border-brand-400/25 hover:bg-brand-500/[0.07]"
                   >
-                    {{ suggestion }}
+                    <div
+                      class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500/10 text-brand-300 transition group-hover:bg-brand-500/15"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M8 10h.01M12 10h.01M16 10h.01M7 17H5.8A2.8 2.8 0 0 1 3 14.2V7.8A2.8 2.8 0 0 1 5.8 5h12.4A2.8 2.8 0 0 1 21 7.8v6.4a2.8 2.8 0 0 1-2.8 2.8H12l-5 3v-3Z"
+                          stroke="currentColor"
+                          stroke-width="1.6"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+
+                    <p
+                      class="mt-4 text-sm font-medium leading-5 text-slate-300 group-hover:text-white"
+                    >
+                      {{ suggestion }}
+                    </p>
                   </button>
                 }
               </div>
             </div>
           } @else {
-            <div
-              class="flex flex-col gap-5 py-2"
-            >
+            <!-- Messages -->
+            <div class="flex flex-col gap-5 py-2">
               @for (
                 message of messages;
                 track $index
               ) {
-                <div
-                  class="flex"
-                  [class.justify-end]="message.role === 'user'"
-                >
-                  <div
-                    class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 sm:max-w-[75%]"
-                    [class.bg-gradient-to-br]="message.role === 'user'"
-                    [class.from-cyan-500]="message.role === 'user'"
-                    [class.to-indigo-500]="message.role === 'user'"
-                    [class.text-white]="message.role === 'user'"
-                    [class.border]="message.role === 'assistant'"
-                    [class.border-white/10]="message.role === 'assistant'"
-                    [class.bg-white/[0.05]]="message.role === 'assistant'"
-                    [class.text-slate-200]="message.role === 'assistant'"
-                  >
-                    {{ message.content }}
+                @if (message.role === 'user') {
+                  <div class="flex justify-end">
+                    <div
+                      class="max-w-[85%] rounded-2xl rounded-br-md bg-brand-700 px-4 py-3 text-sm leading-6 text-white shadow-[0_8px_30px_rgba(28,111,245,0.16)] sm:max-w-[75%]"
+                    >
+                      {{ message.content }}
+                    </div>
                   </div>
-                </div>
+                } @else {
+                  <div class="flex items-start gap-3">
+                    <div
+                      class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand-400/15 bg-brand-500/10 p-1.5"
+                    >
+                      <img
+                        src="/assets/brand/neura-mark.png"
+                        alt=""
+                        aria-hidden="true"
+                        class="h-full w-full object-contain"
+                      >
+                    </div>
+
+                    <div
+                      class="max-w-[85%] rounded-2xl rounded-tl-md border border-white/10 bg-white/[0.045] px-4 py-3 text-sm leading-6 text-slate-200 sm:max-w-[75%]"
+                    >
+                      {{ message.content }}
+                    </div>
+                  </div>
+                }
               }
 
+              <!-- Typing -->
               @if (isSending) {
-                <div class="flex justify-start">
+                <div class="flex items-start gap-3">
                   <div
-                    class="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-4"
+                    class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand-400/15 bg-brand-500/10 p-1.5"
+                  >
+                    <img
+                      src="/assets/brand/neura-mark.png"
+                      alt=""
+                      aria-hidden="true"
+                      class="h-full w-full object-contain"
+                    >
+                  </div>
+
+                  <div
+                    class="flex items-center gap-1.5 rounded-2xl rounded-tl-md border border-white/10 bg-white/[0.045] px-4 py-4"
                   >
                     <span
-                      class="h-2 w-2 animate-bounce rounded-full bg-slate-500"
+                      class="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-300"
                     ></span>
 
                     <span
-                      class="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:120ms]"
+                      class="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-300 [animation-delay:120ms]"
                     ></span>
 
                     <span
-                      class="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:240ms]"
+                      class="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-300 [animation-delay:240ms]"
                     ></span>
                   </div>
                 </div>
@@ -174,20 +233,38 @@
         </div>
       </div>
 
+      <!-- Composer -->
       <footer
-        class="border-t border-white/10 bg-slate-950/30 px-4 py-4 sm:px-6"
+        class="border-t border-white/10 bg-surface-950/45 px-4 py-4 sm:px-6"
       >
         <div class="mx-auto max-w-3xl">
           @if (errorMessage) {
             <div
-              class="mb-3 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
+              class="mb-3 flex items-start gap-3 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm leading-5 text-red-200"
             >
-              {{ errorMessage }}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                class="mt-0.5 h-4 w-4 shrink-0"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 8V12M12 16h.01M10.3 4.6 3.7 16a2 2 0 0 0 1.73 3h13.14A2 2 0 0 0 20.3 16L13.7 4.6a2 2 0 0 0-3.4 0Z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
+              <span>
+                {{ errorMessage }}
+              </span>
             </div>
           }
 
           <div
-            class="flex items-end gap-2 rounded-2xl border border-white/10 bg-white/[0.05] p-2 focus-within:border-cyan-400/30"
+            class="flex items-end gap-2 rounded-2xl border border-white/10 bg-white/[0.045] p-2 shadow-inner transition focus-within:border-brand-400/35 focus-within:bg-brand-500/[0.035] focus-within:shadow-[0_0_0_4px_rgba(55,144,255,0.05)]"
           >
             <textarea
               [(ngModel)]="input"
@@ -196,6 +273,7 @@
               maxlength="4000"
               [disabled]="isSending"
               placeholder="Ask Neura AI anything..."
+              aria-label="Message Neura AI"
               class="max-h-36 min-h-11 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm leading-6 text-white outline-none placeholder:text-slate-500 disabled:opacity-60"
             ></textarea>
 
@@ -204,17 +282,18 @@
               (click)="sendMessage()"
               [disabled]="!input.trim() || isSending"
               aria-label="Send message"
-              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-white shadow-lg shadow-cyan-500/20 transition hover:scale-[1.03] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white shadow-[0_10px_28px_rgba(28,111,245,0.25)] transition hover:-translate-y-0.5 hover:bg-brand-800 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
             >
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
                 class="h-5 w-5"
+                aria-hidden="true"
               >
                 <path
                   d="m5 12 14-7-4 14-3-6-7-1Z"
                   stroke="currentColor"
-                  stroke-width="1.7"
+                  stroke-width="1.8"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
@@ -223,7 +302,7 @@
           </div>
 
           <p
-            class="mt-2 text-center text-[11px] text-slate-600"
+            class="mt-2 text-center text-[11px] leading-4 text-slate-600"
           >
             Enter to send · Shift + Enter for a new line
           </p>

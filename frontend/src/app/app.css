@@ -6,3 +6,20 @@
 textarea {
   scrollbar-width: thin;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgb(148 163 184 / 0.22);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(148 163 184 / 0.35);
+}
