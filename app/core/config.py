@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     app_name: str = "Neura RAG Chatbot API"
     app_version: str = "0.1.0"
     app_env: str = "development"
-    
+
     app_secret_key: str
 
     gemini_api_key: str
@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     rate_limit_enabled: bool = True
     rate_limit_requests: int = 10
     rate_limit_window_seconds: int = 60
+    rate_limit_store: str = "memory"
+    rate_limit_key_prefix: str = "neura:ratelimit:"
 
     conversation_store: str = "memory"
 

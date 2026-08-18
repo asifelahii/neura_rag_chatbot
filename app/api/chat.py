@@ -34,7 +34,7 @@ async def chat(
             else "unknown"
         )
 
-        rate_limiter.check(client_host)
+        await rate_limiter.check(client_host)
 
         conversation_token = request.conversation_id
 

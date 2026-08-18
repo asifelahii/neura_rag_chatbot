@@ -8,6 +8,7 @@ from app.api.chat import router as chat_router
 from app.conversations.store import conversation_store
 from app.core.config import settings
 from app.middleware.request_context import RequestContextMiddleware
+from app.security.rate_limiter import rate_limiter
 
 
 logging.basicConfig(
@@ -33,6 +34,7 @@ async def lifespan(app: FastAPI):
     yield
 
     await conversation_store.close()
+    await rate_limiter.close()
 
     logger.info(
         "Neura application resources closed successfully"
@@ -73,11 +75,17 @@ async def health_check():
 @app.get("/ready", tags=["Health"])
 async def readiness_check():
     try:
-        store_ready = await conversation_store.ping()
+        store_ready = (
+            await conversation_store.ping()
+        )
+
+        rate_limiter_ready = (
+            await rate_limiter.ping()
+        )
 
     except Exception:
         logger.exception(
-            "Conversation store readiness check failed"
+            "Application readiness check failed"
         )
 
         raise HTTPException(
@@ -85,7 +93,10 @@ async def readiness_check():
             detail="Service is not ready.",
         )
 
-    if not store_ready:
+    if not (
+        store_ready
+        and rate_limiter_ready
+    ):
         raise HTTPException(
             status_code=503,
             detail="Service is not ready.",
@@ -95,5 +106,6 @@ async def readiness_check():
         "status": "ready",
         "dependencies": {
             "conversation_store": "healthy",
+            "rate_limiter": "healthy",
         },
     }

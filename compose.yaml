@@ -12,6 +12,7 @@ services:
 
     environment:
       CONVERSATION_STORE: redis
+      RATE_LIMIT_STORE: redis
       REDIS_URL: redis://redis:6379/0
 
     depends_on:
